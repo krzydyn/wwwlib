@@ -77,7 +77,9 @@ class Router {
 				call_user_func_array($r->handler, $best_matches);
 			} catch (\Exception|\Throwable $ex) {
 				//ex->getTraceAsString()
-				logstr("Exception from handler:\n".$ex->getMessage());
+				logstr("Exception from handler:\n".$ex->getMessage()."\n".
+					$ex->getTraceAsString()
+				);
 			}
 		}
 		else {

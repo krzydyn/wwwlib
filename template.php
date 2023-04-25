@@ -68,7 +68,7 @@ function parseTags($t){
 			$c.="<%if(is_array($pn)||is_object($pn)){%>";
 			$c.="\n<% \$$val"."cnt=0;foreach($pn as \$$id=>\$$val){++\$$val"."cnt;%>";
 			$c.=$t3c;
-			$c.="<%}}else if (strlen(\$$val=$pn)>0){%>";
+			$c.="<%}}else if ((\$$val=$pn)!=null){%>";
 			$c.=$t3c;
 			$c.="<%}%>";
 			if ($encl) $c.="</$encl>";

@@ -23,7 +23,7 @@ class ModelObject{
 		$o=new $cl();
 		$fld=get_object_vars($o);
 		foreach ($fld as $f => $v) {
-			if (array_key_exists($f,$this)) $o->{$f}=$this->{$f};
+			if (property_exists($this,$f)) $o->{$f}=$this->{$f};
 			else unset($o->{$f});
 		}
 		return $o;
@@ -163,7 +163,7 @@ class ObjectDB {
 		$row=$o->getValues();
 		$r=$this->db->tabinsert($tab,$row);
 		if ($r===false) return $r;
-		if (array_key_exists("id",$o)) $o->id=$r;
+		if (property_exists($o,"id")) $o->id=$r;
 		return $r;
 	}
 	function update(&$o){
