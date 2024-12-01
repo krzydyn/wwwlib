@@ -6,7 +6,6 @@ class Application{
 	}
 	function Application(){
 		$this->req=Request::getInstance();
-		//$charset="iso-8859-2";
 		$charset="utf-8";
 		$this->setval("charset",$charset);
 		$this->addval("hdr","Content-Type: text/html;charset=\"".$charset."\"");
@@ -34,6 +33,7 @@ class Application{
 			$this->$method();
 		}
 		else{
+			logmsg("action '".$action."' not supported");
 			$this->addval("error","action '".$action."' not supported");
 			$this->defaultAction();
 		}

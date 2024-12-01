@@ -169,7 +169,7 @@ abstract class DB{
 	static function &getDriver($driver=null){
 		global $config;
 		if (empty($driver)) $driver=$config["dbtype"];
-		include_once($config["lib"]."db/".$driver.".php");
+		include_once($config["libphp"]."db/".$driver.".php");
 		$c=$driver."_DB";
 		$c=new $c();
 		return $c;
