@@ -52,7 +52,6 @@ class pdo_DB extends DB{
 
 		if (sizeof($params) > 0) {
 			$this->sql=$q."('".implode("','",$params)."')";
-			logstr("prepare: ".$q);
 			$stmt = $this->dbhnd->prepare($q);
 			$this->seterr($stmt);
 			if ($stmt===false) return $stmt;

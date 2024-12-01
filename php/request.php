@@ -11,17 +11,18 @@ function logstr_dbg($str){
 	$tm = time();
 	if (isset($config["appname"])) $fn="cache/log-".$config["appname"].date("Ymd",$tm).".txt";
 	else $fn="cache/log".date("Ymd", $tm).".txt";
+	$str = "(".$file.":".$line.") ".$str;
 	$m=umask(0111);
 	$f=@fopen($fn,"ab");
 	umask($m);
 	if ($f!==false){
 		if (flock($f,LOCK_EX)){
-			fwrite($f,date("H:i:s", $tm)." (".$file.":".$line.") ".$str."\n");
+			fwrite($f,date("H:i:s", $tm)." ".$str."\n");
 			flock($f,LOCK_UN);
 		}
 		fclose($f);
 	}
-	else echo "[log] ".$str."\n";
+	else echo "<div class=log>[log] ".$str."\n</div>";
 }
 function logstr_rel($str){
 }
@@ -82,9 +83,6 @@ class Request{
 		self::Request();
 	}
 	private function Request(){
-		/*
-		note: form method GET does not send action paramters
-		*/
 		global $_REQUEST,$_FILES,$_SERVER,$_GET,$_POST,$_COOKIE;
 		global $config,$text;
 		$this->setval("cfg", $config);
@@ -109,29 +107,24 @@ class Request{
 
 		unset($_COOKIE);unset($_REQUEST);unset($_GET);unset($_POST);
 
-		logstr("REQUEST_URI = ".$_SERVER["REQUEST_URI"]);
 		$this->setval("srv",$_SERVER);
 		unset($_SERVER);
+		//usefull shortcuts
 		$this->setval("method",$this->getval("srv.REQUEST_METHOD"));
-		$this->setval("abs-uri",$this->getval("srv.REQUEST_URI"));
+		$this->setval("uri",$this->getval("srv.REQUEST_URI"));
 		$this->setval("remote-addr",$this->getval("srv.REMOTE_ADDR"));
 		$this->setval("remote-port",$this->getval("srv.REMOTE_PORT"));
-
-		$uri = $this->getval("abs-uri");
-		$appuri = $this->getval("cfg.rooturl");
-		logstr("initial uri=".$uri." appuri=".$appuri);
-		if (strpos($appuri,"index.php")!==false) {
-			$appuri=substr($appuri,0,strpos($appuri,"index.php"));
+		$script = $this->getval("srv.SCRIPT_FILENAME");
+		$baseurl = "/";
+		if (!empty($script)) {
+			$root = $this->getval("srv.DOCUMENT_ROOT");
+			if (!str_ends_with($root, "/")) $root.="/";
+			if (str_starts_with($script, $root)) {
+				$i = strrpos($script, "/");
+				$baseurl = substr($script, strlen($root)-1, $i-strlen($root)+1)."/";
+			}
 		}
-		if (strpos($uri, $appuri) == 0) {
-			$uri=substr($uri,strlen($appuri)-1);
-		}
-		$this->setval("cfg.rooturl",$appuri);
-		if (strpos($uri,"?")!==false) {
-			$uri=substr($uri,0,strpos($uri,"?"));
-		}
-		logstr("final uri=".$uri." appuri=".$appuri);
-		$this->setval("uri", $uri);
+		$this->setval("rooturl", $baseurl);
 
 		if (isset($_FILES)){
 			foreach ($_FILES as $k => $v) {

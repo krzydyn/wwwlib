@@ -174,12 +174,14 @@ function make_content_type($f){
 if(!function_exists('mime_content_type')){
 	function mime_content_type($f) { return make_content_type($f); }
 }
-$config["lib"]=strtr(dirname(__FILE__),"\\","/")."/";
+
+
+$config["libphp"]=strtr(dirname(__FILE__),"\\","/")."/";
 
 //Application includes
-include_once($config["lib"]."text.php");
-include_once($config["lib"]."db.php");
-include_once($config["lib"]."request.php");
+include_once($config["libphp"]."text.php");
+include_once($config["libphp"]."db.php");
+include_once($config["libphp"]."request.php");
 
 $config["templatedir"][]=$config["lib"]."templates/";
 
@@ -187,15 +189,15 @@ $config["templatedir"][]=$config["lib"]."templates/";
 if (!array_key_exists("lang",$config)) $config["lang"]="en";
 
 $lang = Request::getInstance()->getval("req.lang",$config["lang"]);
-if (!file_exists("lang/text_".$lang.".php")){
-	$lang="en";
+if (file_exists($config["libphp"]."lang/text_".$lang.".php")) {
+	include_once($config["libphp"]."lang/text_".$lang.".php");
 }
 if (file_exists("lang/text_".$lang.".php")) {
 	include_once("lang/text_".$lang.".php");
-	Request::getInstance()->setval("txt",$text);
-	unset($text);
 }
+Request::getInstance()->setval("txt",$text);
+unset($text);
 unset($lang);
 
-include_once($config["lib"]."template.php");
+include_once($config["libphp"]."template.php");
 ?>

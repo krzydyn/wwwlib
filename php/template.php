@@ -68,7 +68,7 @@ function parseTags($t){
 			$c.="<%if(is_array($pn)||is_object($pn)){%>";
 			$c.="\n<% \$$val"."cnt=0;foreach($pn as \$$id=>\$$val){++\$$val"."cnt;%>";
 			$c.=$t3c;
-			$c.="<%}}else if ((\$$val=$pn)!=null){%>";
+			$c.="<%}}else if (strlen(\$$val=$pn)>0){%>";
 			$c.=$t3c;
 			$c.="<%}%>";
 			if ($encl) $c.="</$encl>";
@@ -148,7 +148,7 @@ function parseTags($t){
 			$c.="fck.BasePath='<%echo js_escape(val(\"cfg.fck\"))%>';\n";
 			if ($sk)
 				$c.="fck.Config['SkinPath']=fck.BasePath+'editor/skins/$sk/';\n";
-			$c.="fck.Config['CustomConfigurationsPath']='<%val(\"cfg.rooturl\").val(\"cfg.fckconfig\")%>';
+			$c.="fck.Config['CustomConfigurationsPath']='<%val(\"rooturl\").val(\"cfg.fckconfig\")%>';
 fck.Create();
 //-->
 </script>
@@ -228,7 +228,7 @@ class TemplateEngine {
 		if ($this->cachedir===false) $this->cachedir="cache"; //default
 		else if (empty($this->cachedir)) $this->cachedir=null;//no cache
 		if (!empty($this->cachedir)){
-			if (strchr($this->cachedir,1)!='/')
+			if (strpos($this->cachedir,'/') != 0)
 				$this->cachedir=$config["rootdir"].$this->cachedir;
 		}
 	}
@@ -303,7 +303,6 @@ class TemplateEngine {
 		$this->headerdone=true;
 	}
 	function load($fn){
-		logstr("load ".$fn);
 		global $config;
 		$this->req->setval("srv",null);
 		$this->headers();
@@ -315,10 +314,10 @@ class TemplateEngine {
 		}
 		$c = ob_get_clean();
 		if (!empty($c)) {
-			if ($c[strlen($c)-1] != '\n') $c .= "\n";
-			$this->req->addval("error",$c);
+			logstr("[len=".strlen($c)."] v='".$c."'");
 		}
 
+		logstr("loading template $fn");
 		ob_start();
 		$this->inc($fn);
 		$c = ob_get_clean();
@@ -329,6 +328,7 @@ class TemplateEngine {
 		//$c=preg_replace_callback('#(>)([^<]+)(<)#s','parseNoTags',$c);
 		//$c=preg_replace_callback('#(<\w[^>]*>)([^<]+)(<[^>]*\w>)#s','parseNoTags',$c);
 		echo $c;
+		logstr("load template $fn fin");
 
 		//to strip html tags:
 		// 1. strip_tags($c);
