@@ -12,8 +12,8 @@ class pdo_RecordSet extends RecordSet{
 		if ($this->rowidx>=$this->numrows) return null;
 		if ($mode==FETCH_ASSOC) $mode=PDO::FETCH_ASSOC;
 		else $mode=PDO::FETCH_NUM;
-		$this->row=$this->res->fetch($mode);
-		if ($this->row) {++$this->rowidx;++$this->numrows;return $this->row;}
+		$row=$this->res->fetch($mode);
+		if ($row) {++$this->rowidx;++$this->numrows;return $row;}
 		return null;
 	}
 	function seek($i){
