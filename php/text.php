@@ -15,8 +15,11 @@ function html_fromBB($txt){
 	$txt=html_escape($txt);
 	$txt=preg_replace("/\\[url=([^] ]*)([^]]*)\\](.*?)\\[\\/url\\]/i","<a\$2 target=\"_blank\" href=\"\$1\">\$3</a>",$txt);
 	$txt=preg_replace("/\\[img([^]]*)\\](.*?)\\[\\/img\\]/i","<a target=\"_blank\" href=\"\$2\"><img\$1 src=\"\$2\"/></a>",$txt);
-	$txt=preg_replace("/\\[b([^]]*)\\](.*?)\\[\\/b\\]/i","<b\$1>\$2</b>",$txt);
 	$txt=preg_replace("/\\[s([^]]*)\\](.*?)\\[\\/s\\]/i","<strike\$1>\$2</strike>",$txt);
+
+	// other [xx] => <xx>
+	//$txt=preg_replace("/\\[b([^]]*)\\](.*?)\\[\\/b\\]/i","<b\$1>\$2</b>",$txt);
+	$txt=preg_replace("/\\[(\\/{0,1})([^]]*)\\]/i","<\$1\$2>",$txt);
 	return $txt;
 }
 function quote_escape($txt){
