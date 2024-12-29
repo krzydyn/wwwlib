@@ -2,12 +2,12 @@
 ob_start();
 date_default_timezone_set("Europe/Warsaw");
 
-function logstr_dbg($str){
+function logstr_dbg($str,$no=0){
 	global $config;
 	$e = new Exception;
 	$trace = $e->getTrace();
-	$file = $trace[1]["file"];
-	$line = $trace[1]["line"];
+	$file = $trace[$no]["file"];
+	$line = $trace[$no]["line"];
 	$tm = time();
 	if (isset($config["appname"])) $fn="cache/log-".$config["appname"].date("Ymd",$tm).".txt";
 	else $fn="cache/log".date("Ymd", $tm).".txt";
@@ -27,7 +27,7 @@ function logstr_dbg($str){
 function logstr_rel($str){
 }
 function logstr($str){
-	logstr_dbg($str);
+	logstr_dbg($str,1);
 }
 
 function array_setval(&$t,$n,&$v=null){
@@ -125,6 +125,12 @@ class Request{
 			}
 		}
 		$this->setval("rooturl", $baseurl);
+		logstr("rooturl = ". $baseurl);
+		$uri = $this->getval("uri");
+		if ($baseurl != "/" && str_starts_with($uri, $baseurl)) {
+			$uri = substr($uri, strlen($baseurl)-1);
+			$this->setval("uri",$uri);
+		}
 
 		if (isset($_FILES)){
 			foreach ($_FILES as $k => $v) {

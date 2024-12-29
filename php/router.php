@@ -1,6 +1,6 @@
 <?php
 //ini_set('zlib.output_compression', '1');
-require_once($config["lib"]."modules.php");
+require_once($config["lib"]."php/modules.php");
 class Route {
 	var $method;
 	var $re_uri;
@@ -50,25 +50,25 @@ class Route {
 
 class Router {
 	private $routes = array();
+	public $dbg = 0;
 
 	public function addRoute($method, $uri, $handler) {
 		$this->routes[] = new Route($method, $uri, $handler);
 	}
 	public function route($method, $uri) {
-		$dbg=0;
 		$best_match=0;
 		$best_route=null;
 		$best_matches=null;
-		if ($dbg) logstr("matching '".$method.":".$uri."'");
+		if ($this->dbg) logstr("matching '".$method.":".$uri."'");
 		foreach ($this->routes as $r) {
-			$r->dbg = $dbg;
+			$r->dbg = $this->dbg;
 			$m = $r->match($method, $uri, $matches);
 			$patt="%^".$r->esc_re($r->re_uri,"%")."$%i";
 			if ($m > $best_match) {
 				$best_match = $m;
 				$best_route = $r;
 				$best_matches = $matches;
-				if ($dbg) logstr("match on ".$patt." is ".$m." matches=".print_r($best_matches,true));
+				if ($this->dbg) logstr("match on ".$patt." is ".$m." matches=".print_r($best_matches,true));
 			}
 		}
 		if ($best_route != null) {

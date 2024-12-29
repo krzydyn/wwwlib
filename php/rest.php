@@ -1,5 +1,5 @@
 <?php
-require_once($config["lib"]."modules.php");
+require_once($config["lib"]."php/modules.php");
 
 /**
  * $data = array("key"=>"value",....)
